@@ -41,17 +41,17 @@ app.get("/scrape", function(req, res) {
       .children("h3")
       .text();
       result.link = $(this)
-      .children("a")
+      
       .attr("href");
 
 
-      // db.Article.create(result)
-      //   .then(function(dbArticle) {
-      //     console.log(dbArticle);
-      //   })
-      //   .catch(function(err) {
-      //     console.log(err);
-      //   });
+      db.Article.create(result)
+        .then(function(dbArticle) {
+          console.log(dbArticle);
+        })
+        .catch(function(err) {
+          console.log(err);
+        });
       res.json(result);
     });
 
@@ -62,15 +62,15 @@ app.get("/scrape", function(req, res) {
 });
 
 
-// app.get("/articles", function(req, res) {
-//   db.Article.find({})
-//     .then(function(dbArticle) {
-//       res.json(dbArticle);
-//     })
-//     .catch(function(err) {
-//       res.json(err)
-//     })
-// })
+app.get("/articles", function(req, res) {
+  db.Article.find({})
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err)
+    })
+})
 
 
 
