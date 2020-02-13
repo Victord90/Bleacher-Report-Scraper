@@ -1,4 +1,6 @@
 const express = require("express");
+const logger = require("morgan")
+const exphbs = require("express-handlebars");
 const mongoose = require("mongoose");
 
 const axios = require("axios");
@@ -10,24 +12,31 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 
+
+app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
 
 
-// app.set("views", "./views");
-// app.engine(
-//   "handlebars",
-//   exphbs({
-//     defaultLayout: "main"
-//   })
-// );
-// app.set("view engine", "handlebars");
+app.set("views", "./views");
+app.engine(
+  "handlebars",
+  exphbs({
+    defaultLayout: "main"
+  })
+);
+app.set("view engine", "handlebars");
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
 mongoose.connect(MONGODB_URI);
+
+
+app.get("/", function(req, res) {
+  res.render("index");
+});
 
 /// A GET route for scraping bleacher report
 app.get("/scrape", function(req, res) {
@@ -52,11 +61,7 @@ app.get("/scrape", function(req, res) {
         .catch(function(err) {
           console.log(err);
         });
-      res.json(result);
     });
-
-    
-
 
   });
 });
@@ -69,17 +74,39 @@ app.get("/articles", function(req, res) {
     })
     .catch(function(err) {
       res.json(err)
+    });
+});
+
+
+app.get("/articles/:id", function(req, res) {
+  db.Article.findOne({_id: req.params.id })
+    .populate("note")
+    .then(function(dbArticle){
+      res.json(dbArticle);
     })
-})
+    .catch(function(err) {
+      res.json(err);
+    });
+});
 
 
+app.post("/articles/:id", function(req, res) {
+  db.Note.create(req.body)
+    .then(function(dbNote) {
+      return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+    })
+    .then(function(dbArticle) {
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      res.json(err);
+    });
+});
 
 
-
-
-
-
-
+//Routes
+// require("./routes/apiRoutes")(app);
+// require("./routes/htmlRoutes")(app);
 
 
 
