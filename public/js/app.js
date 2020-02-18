@@ -16,16 +16,6 @@ $(document).on("click", "#scrape", function() {
 
 
 
-
-
-// $.getJson("/articles", function(data) {
-//     for (let i = 0; i < data.length; i++) {
-//         $("#articles").append("< data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-
-//     }
-// });
-
-
 $(document).on("click", "p", function() {
     $("#notes").empty();
 
@@ -37,9 +27,9 @@ $(document).on("click", "p", function() {
     })
     .then(function(data) {
 
-        $("#notes").append("<h2>" + data.title + "</h2>");
-        $("#notes").append("<input id='titleinput' name='title' >");
-        $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
+        $("#notes").append("<h3>" + data.title + "</h3>");
+        $("#notes").append("<input id='titleinput' name='title' placeholder='Note Title'>");
+        $("#notes").append("<textarea id='bodyinput' name='body' placeholder='comment section'></textarea>");
         $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
     })
 
